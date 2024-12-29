@@ -1,7 +1,7 @@
 # this allows us to use code from
 # the open-source pygame library
 # throughout this file
-import pygame
+import pygame # type: ignore
 from constants import *
 from player import Player
 
@@ -18,6 +18,10 @@ def main():
     clock = pygame.time.Clock()
     dt = 0
 
+    updatable = pygame.sprite.Group()
+    drawable = pygame.sprite.Group()
+    Player.containers = (updatable, drawable)
+
     player = Player(CENTER_X, CENTER_Y)
 
     while(1):
@@ -25,8 +29,13 @@ def main():
             if event.type == pygame.QUIT:
                 return
         screen.fill(COLORS["BLK"])
-        player.draw(screen)
-        player.update(dt)
+        
+        for sprite in updatable:
+            sprite.update(dt)
+
+        for sprite in drawable:
+            sprite.draw(screen)
+
         pygame.display.flip()
         # tick for 1/60th of a second, convert delta to seconds (ms->s)
         dt = (clock.tick(60)/1000)
